@@ -1,0 +1,31 @@
+{
+  "name": "node-blte",
+  "version": "1.0.0",
+  "description": "BLTE file reader for Blizzard Entertainment games.",
+  "main": "BLTEReader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kruithne/node-blte.git"
+  },
+  "keywords": [
+    "blte",
+    "blizzard",
+    "wow"
+  ],
+  "author": "Kruithne <kruithne@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kruithne/node-blte/issues"
+  },
+  "homepage": "https://github.com/Kruithne/node-blte#readme",
+  "dependencies": {
+    "bufo": "^1.0.4",
+    "bytey": "^1.0.1",
+    "md5": "^2.2.1",
+    "node-salsa20": "0.0.1",
+    "zlib": "^1.0.5"
+  }
+}
