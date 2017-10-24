@@ -1,6 +1,6 @@
 {
   "name": "node-blte",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "BLTE file reader for Blizzard Entertainment games.",
   "main": "BLTEReader.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "wow"
   ],
   "author": "Kruithne <kruithne@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Kruithne/node-blte/issues"
   },

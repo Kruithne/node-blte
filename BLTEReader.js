@@ -1,3 +1,9 @@
+/*!
+	BLTEReader (https://github.com/Kruithne/node-blte)
+	Author: Kruithne <kruithne@gmail.com>
+	License: MIT
+ */
+
 const Bufo = require('bufo');
 const md5 = require('md5');
 const zlib = require('zlib');
