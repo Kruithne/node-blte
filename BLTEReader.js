@@ -224,3 +224,5 @@ class BLTEReader extends Bufo {
 		throw new Error(util.format('BLTEReader: ' + message, ...args));
 	}
 }
+
+module.exports = BLTEReader;
