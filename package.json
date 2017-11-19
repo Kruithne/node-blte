@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/Kruithne/node-blte#readme",
   "dependencies": {
-    "bufo": "^1.0.4",
-    "bytey": "^1.0.1",
+    "bufo": "^1.1.0",
+    "bytey": "^1.0.3",
     "md5": "^2.2.1",
     "node-salsa20": "0.0.1",
     "zlib": "^1.0.5"
