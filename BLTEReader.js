@@ -103,7 +103,7 @@ class BLTEReader extends Bufo {
 	}
 
 	readAllBlocks() {
-		while (this.blockIndex > this.blocks.length)
+		while (this.blockIndex < this.blocks.length)
 			this._processBlock();
 	}
 
