@@ -25,4 +25,6 @@ let reader = new BLTEReader(buffer, key);
 
 // `reader` can now be used just like a normal Bufo instance, and will automatically
 // decompress and decrypt blocks (using given keys) as needed.
+
+// If you need all blocks to be pre-processed (buffer transfer, etc), call `readAllBlocks()` first.
 ```
