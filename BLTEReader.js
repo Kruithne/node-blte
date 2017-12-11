@@ -235,7 +235,7 @@ class BLTEReader extends Bufo {
 				throw new BLTEError(0x10, 'Encryption key names are expected to be 8-bytes (16 length string).');
 
 			let key = keys[keyName];
-			if (keyName.length !== 32)
+			if (key.length !== 32)
 				throw new BLTEError(0x11, 'Encryption keys are expected to be 16-bytes (32 length string).');
 
 			// Store in static key ring.
