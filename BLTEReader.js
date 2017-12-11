@@ -186,7 +186,7 @@ class BLTEReader extends Bufo {
 		if (keyNameSize === 0 || keyNameSize !== 8)
 			throw new BLTEError(0xA, 'Unexpected keyNameSize => %d', keyNameSize);
 
-		let keyNameBytes = bytey.byteArrayToHexString(data.readUInt8(keyNameSize));
+		let keyNameBytes = bytey.byteArrayToHexString(data.readUInt8(keyNameSize)).toLowerCase();
 		let ivSize = data.readUInt8();
 
 		if (ivSize !== 4)
@@ -235,7 +235,7 @@ class BLTEReader extends Bufo {
 				throw new BLTEError(0x10, 'Encryption keys are expected to be 8-bytes (16 length string).');
 
 			// Store in static key ring.
-			KEY_RING[keyName] = keys[keyName];
+			KEY_RING[keyName.toLowerCase()] = keys[keyName];
 		}
 	}
 }

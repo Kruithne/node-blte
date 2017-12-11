@@ -1,6 +1,6 @@
 {
   "name": "node-blte",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "BLTE file reader for Blizzard Entertainment games.",
   "main": "BLTEReader.js",
   "scripts": {
