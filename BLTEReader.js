@@ -217,7 +217,7 @@ class BLTEReader extends Bufo {
 		keyBuffer.writeUInt8(key);
 
 		let instance = salsa20(20).key(keyBuffer.raw);
-		return new Bufo(instance.decrypt(data.readBuffer()));
+		return new Bufo(instance.decrypt(data.readArrayBuffer()));
 	}
 
 	/**
