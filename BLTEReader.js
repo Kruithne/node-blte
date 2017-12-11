@@ -16,6 +16,20 @@ const ENC_TYPE_ARC4 = 0x41;
 const EMPTY_HASH = [0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0];
 const KEY_RING = {};
 
+/**
+ * Error thrown by the BLPFile class.
+ * @class BLPError
+ */
+class BLTEError extends Error {
+	constructor(id, message, ...args) {
+		message = 'BLTE: ' + util.format(message, args);
+		super(message);
+		this.errID = id;
+		this.stack = (new Error(message)).stack;
+		this.name = this.constructor.name;
+	}
+}
+
 class BLTEReader extends Bufo {
 	/**
 	 * Create a new BLTEReader instance.
@@ -34,11 +48,11 @@ class BLTEReader extends Bufo {
 
 		let size = buffer.byteLength;
 		if (size < 8)
-			BLTEReader.error('Not enough data. (8)');
+			throw new BLTEError(0x1, 'Not enough data. (8)');
 
 		let magic = buffer.readInt32();
 		if (magic !== 0x45544c42)
-			BLTEReader.error('Invalid data (magic).');
+			throw new BLTEError(0x2, 'Invalid data (magic).');
 
 		let headerSize = buffer.readInt32(1, Bufo.ENDIAN_BIG);
 
@@ -47,28 +61,28 @@ class BLTEReader extends Bufo {
 
 		let newHash = md5(headerSize > 0 ? buffer.readUInt8(headerSize) : buffer.readUInt8(size));
 		if (newHash !== hash)
-			BLTEReader.error('Hash mismatch. Expected %s, got %s.', hash, newHash);
+			throw new BLTEError(0x3, 'Hash mismatch. Expected %s, got %s.', hash, newHash);
 
 		buffer.seek(origPos);
 
 		let numBlocks = 1;
 		if (headerSize > 0) {
 			if (size < 12)
-				BLTEReader.error('Not enough data (12)');
+				throw new BLTEError(0x4, 'Not enough data (12)');
 
 			let fcBytes = buffer.readUInt8(4);
 
 			numBlocks = fcBytes[1] << 16 | fcBytes[2] << 8 | fcBytes[3] << 0;
 
 			if (fcBytes[0] !== 0x0F || numBlocks === 0)
-				BLTEReader.error('Invalid table format.');
+				throw new BLTEError(0x5, 'Invalid table format.');
 
 			let frameHeaderSize = 24 * numBlocks + 12;
 			if (headerSize !== frameHeaderSize)
-				BLTEReader.error('Invalid header size.');
+				throw new BLTEError(0x6, 'Invalid header size.');
 
 			if (size < frameHeaderSize)
-				BLTEReader.error('Not enough data (frameHeader)');
+				throw new BLTEError(0x7, 'Not enough data (frameHeader)');
 		}
 
 		this.blocks = [];
@@ -122,7 +136,7 @@ class BLTEReader extends Bufo {
 			block.Data.seek(0);
 
 			if (!bytey.isByteArrayEqual(blockHash, block.Hash))
-				BLTEReader.error('Block data hash mismatch.');
+				throw new BLTEError(0x8, 'Block data hash mismatch.');
 		}
 
 		this._handleBlock(block.Data, this.blockIndex);
@@ -141,7 +155,7 @@ class BLTEReader extends Bufo {
 				break;
 
 			case 0x46: // Frame (Recursive)
-				BLTEReader.error('No frame decoder implemented.');
+				throw new BLTEError(0x9, 'No frame decoder implemented.');
 				break;
 
 			case 0x4E: // Frame (Normal)
@@ -170,31 +184,31 @@ class BLTEReader extends Bufo {
 		let keyNameSize = data.readUInt8();
 
 		if (keyNameSize === 0 || keyNameSize !== 8)
-			BLTEReader.error('Unexpected keyNameSize => ' + keyNameSize);
+			throw new BLTEError(0xA, 'Unexpected keyNameSize => %d', keyNameSize);
 
 		let keyNameBytes = bytey.byteArrayToHexString(data.readUInt8(keyNameSize));
 		let ivSize = data.readUInt8();
 
 		if (ivSize !== 4)
-			BLTEReader.error('Unexpected ivSize => ' + ivSize);
+			throw new BLTEError(0xB, 'Unexpected ivSize => %d', ivSize);
 
 		let ivShort = data.readUInt8(ivSize);
 		if (data.byteLength <= data.offset)
-			BLTEReader.error('Unexpected EoS before encryption flag.');
+			throw new BLTEError(0xC, 'Unexpected EoS before encryption flag.');
 
 		let encryptType = data.readUInt8();
 		if (encryptType !== ENC_TYPE_SALSA20 && encryptType !== ENC_TYPE_ARC4)
-			BLTEReader.error('Unexpected encryption type %s', encryptType);
+			throw new BLTEError(0xD, 'Unexpected encryption type %s', encryptType);
 
 		for (let shift = 0, i = 0; i < 4; shift += 8, i++)
 			ivShort[i] ^= (index >> shift) & 0xFF;
 
 		let key = KEY_RING[keyNameBytes];
 		if (key === undefined)
-			BLTEReader.error('Unknown key %s', keyNameBytes);
+			throw new BLTEError(0xE, 'Unknown key %s', keyNameBytes);
 
 		if (encryptType === ENC_TYPE_ARC4)
-			BLTEReader.error('Arc4 decryption not implemented.');
+			throw new BLTEError(0xF, 'Arc4 decryption not implemented.');
 
 		let keyBuffer = Bufo.create(key.length + 8);
 		for (let i = 0; i < 8; i++)
@@ -218,15 +232,11 @@ class BLTEReader extends Bufo {
 
 			// Ensure we have a valid key length.
 			if (keyName.length !== 16)
-				throw new Error('Encryption keys are expected to be 8-bytes (16 length string).');
+				throw new BLTEError(0x10, 'Encryption keys are expected to be 8-bytes (16 length string).');
 
 			// Store in static key ring.
 			KEY_RING[keyName] = keys[keyName];
 		}
-	}
-
-	static error(message, ...args) {
-		throw new Error(util.format('BLTEReader: ' + message, ...args));
 	}
 }
 
