@@ -104,6 +104,7 @@ class BLTEReader extends Bufo {
 			this.blocks[i] = block;
 		}
 
+		this.raw = Buffer.alloc(allocSize);
 		this._processBlock();
 	}
 
@@ -174,6 +175,7 @@ class BLTEReader extends Bufo {
 			// Reallocate buffer to compensate.
 			let newBuffer = new Bufo((this.byteLength - expectedSize) + decompressed.byteLength);
 			newBuffer.writeBuffer(this);
+			this.raw = newBuffer.raw;
 		}
 		this.writeBuffer(decompressed);
 	}
