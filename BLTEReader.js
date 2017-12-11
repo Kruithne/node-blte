@@ -173,7 +173,7 @@ class BLTEReader extends Bufo {
 		let expectedSize = this.blocks[index].DecompSize;
 		if (decompressed.byteLength > expectedSize) {
 			// Reallocate buffer to compensate.
-			let newBuffer = Bufo.create((this.byteLength - expectedSize) + decompressed.byteLength);
+			let newBuffer = new Bufo((this.byteLength - expectedSize) + decompressed.byteLength);
 			newBuffer.writeBuffer(this);
 			this._buffer = newBuffer.raw;
 		}
@@ -210,14 +210,14 @@ class BLTEReader extends Bufo {
 		if (encryptType === ENC_TYPE_ARC4)
 			throw new BLTEError(0xF, 'Arc4 decryption not implemented.');
 
-		let keyBuffer = Bufo.create(key.length + 8);
+		let keyBuffer = new Bufo(key.length + 8);
 		for (let i = 0; i < 8; i++)
 			keyBuffer.writeUInt8(i < ivShort.length ? ivShort[i] : 0x0);
 
 		keyBuffer.writeUInt8(key);
 
-		let instance = salsa20(20).key(keyBuffer.buffer);
-		return Bufo.create(instance.decrypt(data.readBuffer()));
+		let instance = salsa20(20).key(keyBuffer.raw);
+		return new Bufo(instance.decrypt(data.readBuffer()));
 	}
 
 	/**
