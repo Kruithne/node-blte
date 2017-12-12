@@ -214,7 +214,7 @@ class BLTEReader extends Bufo {
 		for (let i = 0; i < 8; i++)
 			nonce[i] = (i < ivShort.length ? ivShort[i] : 0x0);
 
-		let instance = new Salsa20(16, nonce, key);
+		let instance = new Salsa20(20, nonce, key);
 		return instance.process(data.readBufo());
 	}
 
