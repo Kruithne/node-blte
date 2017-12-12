@@ -96,6 +96,8 @@ class Salsa20 {
 			out.writeUInt8(this.block[this.blockUsed]);
 			this.blockUsed++;
 		}
+
+		out.seek(0);
 		return out;
 	}
 
