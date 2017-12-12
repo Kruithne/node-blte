@@ -204,8 +204,12 @@ class BLTEReader extends Bufo {
 			ivShort[i] ^= (index >> shift) & 0xFF;
 
 		let key = KEY_RING[keyNameBytes];
+		this.decryptionKeyName = keyNameBytes;
+
 		if (key === undefined)
 			throw new BLTEError(0xE, 'Unknown key %s', keyNameBytes);
+
+		this.decryptionKey = key;
 
 		if (encryptType === ENC_TYPE_ARC4)
 			throw new BLTEError(0xF, 'Arc4 decryption not implemented.');
