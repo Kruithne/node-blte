@@ -150,7 +150,7 @@ class BLTEReader extends Bufo {
 
 		switch (flag) {
 			case 0x45: // Encrypted
-				let decrypted = BLTEReader._decryptBlock(data, index);
+				let decrypted = this._decryptBlock(data, index);
 				this._handleBlock(decrypted, index);
 				break;
 
@@ -180,7 +180,7 @@ class BLTEReader extends Bufo {
 		this.writeBuffer(decompressed);
 	}
 
-	static _decryptBlock(data, index) {
+	_decryptBlock(data, index) {
 		let keyNameSize = data.readUInt8();
 
 		if (keyNameSize === 0 || keyNameSize !== 8)
