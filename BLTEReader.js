@@ -8,8 +8,8 @@ const Bufo = require('bufo');
 const md5 = require('md5');
 const zlib = require('zlib');
 const util = require('util');
-const salsa20 = require('node-salsa20');
 const bytey = require('bytey');
+const Salsa20 = require('./salsa20');
 
 const ENC_TYPE_SALSA20 = 0x53;
 const ENC_TYPE_ARC4 = 0x41;
@@ -210,14 +210,12 @@ class BLTEReader extends Bufo {
 		if (encryptType === ENC_TYPE_ARC4)
 			throw new BLTEError(0xF, 'Arc4 decryption not implemented.');
 
-		let keyBuffer = new Bufo(key.length + 8);
+		let nonce = [];
 		for (let i = 0; i < 8; i++)
-			keyBuffer.writeUInt8(i < ivShort.length ? ivShort[i] : 0x0);
+			nonce[i] = (i < ivShort.length ? ivShort[i] : 0x0);
 
-		keyBuffer.writeUInt8(key);
-
-		let instance = salsa20(20).key(keyBuffer.raw);
-		return new Bufo(instance.decrypt(data.readArrayBuffer()));
+		let instance = new Salsa20(16, nonce, key);
+		return instance.process(data.readBufo());
 	}
 
 	/**
