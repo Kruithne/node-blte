@@ -48,8 +48,8 @@ class Salsa20 {
 		this.block = [];
 		this.blockUsed = 64;
 
-		this.setKey(key);
-		this.setNonce(nonce);
+		this.setKey(Array.from(key));
+		this.setNonce(Array.from(nonce));
 	}
 
 	/**
