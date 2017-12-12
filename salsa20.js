@@ -114,6 +114,7 @@ class Salsa20 {
 		for (let i = 0; i < buf.byteLength; i++)
 			out.writeUInt8(bytes.readUInt8() ^ buf.readUInt8());
 
+		out.seek(0);
 		return out;
 	}
 
