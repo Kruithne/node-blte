@@ -196,9 +196,9 @@ class BLTEReader extends Bufo {
 		if (data.byteLength <= data.offset)
 			throw new BLTEError(0xC, 'Unexpected EoS before encryption flag.');
 
-		let encryptType = data.readUInt8();
-		if (encryptType !== ENC_TYPE_SALSA20 && encryptType !== ENC_TYPE_ARC4)
-			throw new BLTEError(0xD, 'Unexpected encryption type %s', encryptType);
+		this.encryptType = data.readUInt8();
+		if (this.encryptType !== ENC_TYPE_SALSA20 && this.encryptType !== ENC_TYPE_ARC4)
+			throw new BLTEError(0xD, 'Unexpected encryption type %s', this.encryptType);
 
 		for (let shift = 0, i = 0; i < 4; shift += 8, i++)
 			ivShort[i] ^= (index >> shift) & 0xFF;
@@ -211,7 +211,7 @@ class BLTEReader extends Bufo {
 
 		this.decryptionKey = key;
 
-		if (encryptType === ENC_TYPE_ARC4)
+		if (this.encryptType === ENC_TYPE_ARC4)
 			throw new BLTEError(0xF, 'Arc4 decryption not implemented.');
 
 		let nonce = [];
